@@ -61,6 +61,8 @@ services:
 
 * Client refers to the machine with the RAID card, Server refers to the machine hosting the web interface. A single machine can be both.
 
-## Docker Hub
+## Links
 
-https://hub.docker.com/repository/docker/mecjay12/lsa/general
+[Docker Hub](https://hub.docker.com/repository/docker/mecjay12/lsa/general)
+
+[GitHub](https://github.com/MeCJay12/lsi-storage-authority/)
