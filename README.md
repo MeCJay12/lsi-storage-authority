@@ -53,8 +53,8 @@ services:
 | --publish 9000:9000 | ports:<br>- 9000:9000 | Client | Opens the port for remote management. The default port is 9000. This should match LSA_PORT on the client if it is set. |
 | --env TZ=America/New_York | environment:<br>- TZ=America/New_York | Not | Sets timezone inside the container. |
 | --env ROOT_PASSWORD="password" | environment:<br>- ROOT_PASSWORD=password | Not | Sets the password for the root user to login to the web interface. |
-| --env ADD_USERS_RW="readWriteUser:password user2:password" | environment:<br>- ADD_USERS_RW=readWriteUser:password user2:password | Not | Creates additional users with read/write permission in the web interface. Users should be in <username>:<password> format with spaces between multiple users. |
-| --env ADD_USERS_RO="readOnlyUser:password" | environment:<br>- ADD_USERS_RO=readOnlyUser:password | Not | Creates additional users with read-only permission in the web interface. Users should be in <username>:<password> format with spaces between multiple users. |
+| --env ADD_USERS_RW=<br>"readWriteUser:password user2:password" | environment:<br>- ADD_USERS_RW=<br>readWriteUser:password user2:password | Not | Creates additional users with read/write permission in the web interface. Users should be in <username>:<password> format with spaces between multiple users. |
+| --env ADD_USERS_RO=<br>"readOnlyUser:password" | environment:<br>- ADD_USERS_RO=<br>readOnlyUser:password | Not | Creates additional users with read-only permission in the web interface. Users should be in <username>:<password> format with spaces between multiple users. |
 | --env WEB_PORT=2463 | environment:<br>- WEB_PORT=2463 | Not | Set the port for the web interface. Defaults to 2463 if not set. |
 | --env LSA_PORT=9000 | environment:<br>- LSA_PORT=9000 | Not | Set the port for remote management. Defaults to 9000 if not set. |
 | mecjay12/lsa | image: mecjay12/lsa | All | Pulls the latest stable version of this container. |
