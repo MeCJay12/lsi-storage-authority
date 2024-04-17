@@ -1,0 +1,227 @@
+#!/bin/bash
+#
+# LSI Storage Authority : This starts and stops LSIStorageAuthority service.
+#
+# chkconfig: 345 99 50
+# description: LSI Storage Authority Service
+#
+# processname: LSA
+
+
+### BEGIN INIT INFO
+# Provides: LSISA
+# Required-Start:
+# Required-Stop:
+# Should-Start:
+# Should-Stop:
+# Default-Start: 3 4 5
+# Default-Stop: 0 1 2 6
+# Short-Description: start and stop LSIStorageAuthority service
+# Description: LSI Storage Authority Service
+### END INIT INFO
+
+
+RETVAL=0
+#INSTALL_ROOT=`rpm -ql LSIStorageAuthority | grep LSA | head -1 | sed "s/bin\\/LSA//g"`
+
+if [[ $INSTALL_ROOT = "" ]]; then
+        INSTALL_ROOT="/opt/lsi/LSIStorageAuthority"
+fi
+
+prog="LSA"
+SLPD_BIN=""
+SLPD_LOG=""
+SLPD_KILL="killall slpd > /dev/null 2>&1"
+
+start(){
+    [ -f "${INSTALL_ROOT}/bin/LSA" ] || exit 5
+
+    if ! [ "$(pidof slpd)" ]; then
+        if [ -x /opt/lsi/LSA/libs2/slpd ]; then
+            export LD_LIBRARY_PATH=/opt/lsi/LSA/libs2
+            SLPD_BIN="/opt/lsi/LSA/libs2/./slpd > /dev/null 2>&1"
+	    SLPD_LOG="/usr/local/var/log/slpd.log"
+        else
+            if [ -x /usr/sbin/slpd ]; then
+                SLPD_BIN="/usr/sbin/slpd > /dev/null 2>&1"
+		SLPD_LOG="/var/log/slpd.log"
+            elif [ -x /usr/local/sbin/slpd ]; then
+                SLPD_BIN="/usr/local/sbin/slpd > /dev/null 2>&1"
+		SLPD_LOG="/usr/local/var/log/slpd.log"
+            else
+                echo "slpd cannot be started"
+            fi
+        fi
+
+	I=1
+	for I in 1 2 3 4 5 6 7 8
+	do
+             if [ $I -eq 8 ]; then
+                  echo "SLPD not started. Please make sure network is available and SLPD is up and running otherwise only local server will be discovered by LSA."
+                  break
+             else
+		rm -f $SLPD_LOG
+		eval $SLPD_BIN
+		sleep 2
+		if [ -f "$SLPD_LOG" ] ; then
+			NULL_IP_COUNT=$(cat $SLPD_LOG | grep -c \(null\))
+			if [ $NULL_IP_COUNT -ge 1 ]; then
+				eval $SLPD_KILL
+                        	sleep 2
+			else
+				break
+			fi
+		fi
+            fi
+	done
+    fi
+
+#	LD_LIBRAR_PATH="${INSTALL_ROOT}/lib:$LD_LIBRAR_PATH"
+#	export LD_LIBRAR_PATH
+	export LD_LIBRARY_PATH="${INSTALL_ROOT}/bin:$LD_LIBRARY_PATH"
+	export LD_LIBRARY_PATH="${INSTALL_ROOT}/plugins:$LD_LIBRARY_PATH"
+	export MALLOC_CHECK_=0
+#	export LANG=C
+#	export LC_ALL=C
+
+	echo -n "Starting LSI Storage Authority:                           "
+	get_LSA_pid
+ 	RETVAL=$?
+	if [ $RETVAL = 0 ]; then
+
+	cd "${INSTALL_ROOT}/bin"
+	./$prog -start # > /dev/null 2>&1
+	# check if service runs for 30 seconds atleast before reporting success
+	c=0
+	while [ $c -lt  6 ]; do
+		is_running
+		RETVAL=$?
+		if [ $RETVAL = 0 ]; then
+			echo -e "[\033[33;31mFAILED\033[0m]"
+			return 1
+		fi
+			sleep 2
+			c=$[$c+1]
+		done
+	fi
+	echo -e "[\033[33;32m  OK  \033[0m]"
+	if [ -d "${INSTALL_ROOT}/server" ]; then
+		cd "${INSTALL_ROOT}/server"
+		./nginx -p . -g 'daemon off;'
+	fi
+    return  0
+}
+
+stop(){
+    [ -f "${INSTALL_ROOT}/bin/LSA" ] || exit 5
+
+    if [ -d "${INSTALL_ROOT}/bin" ]; then
+    cd "${INSTALL_ROOT}/bin"
+    ./slp_deregister > /dev/null 2>&1
+    fi
+
+    echo -n "Stopping LSI Storage Authority:                           "
+    
+    if [ -d "${INSTALL_ROOT}/server" ]; then
+    cd "${INSTALL_ROOT}/server"
+    ./nginx -s stop -p . > /dev/null 2>&1
+    fi
+
+	is_running
+     RETVAL=$?
+	if [ $RETVAL = 1 ]; then
+		pid=$LSAPID
+		kill -s 9 $pid > /dev/null 2>&1
+		# check for 30 seconds atleast before reporting service is down
+		c=0
+		while [ $c -lt 6 ]; do
+			is_running
+        RETVAL=$?
+			if [ $RETVAL = 0 ]; then 
+				break
+     fi
+			sleep 5
+			c=$[$c+1]
+		done
+		if [ $RETVAL = 1 ]; then
+			echo -e "[\033[33;31mFAILED\033[0m]"
+			return 1
+		fi
+	fi  
+	echo -e "[\033[33;32m  OK  \033[0m]"
+    return $RETVAL
+
+}
+
+restart(){
+    stop
+    sleep 2
+    start
+}
+
+# get current status
+status(){
+	is_running
+    RETVAL=$?
+    if [ $RETVAL = 1 ]; then
+	pid=$LSAPID
+        echo -n "LSI Storage Authority (pid  ${pid}) is running..."
+	echo
+    else
+        echo -n "LSI Storage Authority is stopped"
+	echo
+    fi
+}
+
+
+# Check if running
+# 1 - if running 
+# 0 - if not running
+is_running() 
+{
+	get_LSA_pid
+	RETVAL=$?
+	if [ $RETVAL != 0 ]; then
+		# already running
+		return 1 
+	fi
+	return 0
+}
+
+get_LSA_pid()
+{
+    pid=`ps -ef | grep "./LSA -start" | grep -v grep | awk  '{print $2}'`
+    RETVAL=$?
+    if [ $RETVAL = 0 ] && [[ $pid != "" ]]; then
+	export LSAPID=$pid
+	return 1
+	fi
+	return  0
+}
+
+
+
+# See how we were called.
+case "$1" in
+    start)
+	start
+	RETVAL=$?
+	;;
+    stop)
+	stop
+	RETVAL=$?
+	;;
+    status)
+	status
+	RETVAL=$?
+	;;
+    restart)
+	restart
+	RETVAL=$?
+	;;
+    *)
+	echo $"Usage: $0 {start|stop|status|restart}"
+	RETVAL=2
+esac
+
+exit $RETVAL
