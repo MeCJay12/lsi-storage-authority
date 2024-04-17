@@ -1,5 +1,5 @@
 # Dockerized LSI Storage Authority
-LSI Storage Authority (LSA) is the successor to MegaRaid Storage Manager (MSM) for managing LSI hardware RAID cards from inside the OS. LSA improves on MSM by including a web server instead of the old MSM java client that was run locally. LSA features both local and remote server management from one interface.
+LSI Storage Authority (LSA) is the successor to MegaRaid Storage Manager (MSM) for managing MegaRAID cards from inside the OS. LSA improves on MSM by including a web server instead of the old MSM java client that was run locally. LSA features both local and remote server management from one interface.
 
 ## Using the Container
 ### Docker Run
@@ -60,3 +60,7 @@ services:
 | mecjay12/lsa | image: mecjay12/lsa | All | Pulls the latest stable version of this container. |
 
 * Client refers to the machine with the RAID card, Server refers to the machine hosting the web interface. A single machine can be both.
+
+## Docker Hub
+
+https://hub.docker.com/repository/docker/mecjay12/lsa/general
