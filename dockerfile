@@ -5,8 +5,6 @@ ENV WEB_PORT="2463"
 ENV LSA_PORT="9000"
 ENV VERSION="007.018.004.000"
 ENV TERM=xterm
-ENV TZ=UTC
-ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt -y update && apt -y install wget unzip libldap2-dev
 COPY entrypoint.sh /
