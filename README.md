@@ -8,7 +8,7 @@ LSI Storage Authority (LSA) is the successor to MegaRaid Storage Manager (MSM) f
 docker run \
 	--detach \
 	--privileged \
-	--volume /DataDir:/opt/lsi/LSIStorageAuthority \
+	--volume /DataDir:/opt/lsi/LSIStorageAuthority/conf \
 	--publish 2463:2463 \
 	--publish 9000:9000 \
 	--env TZ=America/New_York \
@@ -28,7 +28,7 @@ services:
   lsa:
     privileged: true
     volumes:
-      - /mnt/Docker/LSA:/opt/lsi/LSIStorageAuthority
+      - /DataDir:/opt/lsi/LSIStorageAuthority/conf
     ports:
       - 2463:2463
       - 9000:9000
@@ -48,7 +48,7 @@ services:
 | ---------- | -------------- | ------------ | ------ |
 | --detach | - | All | Run the container in the background |
 | --privileged | privileged: true |  Client | Required on the host with the RAID card. Grants the container access to hardware PCI devices. If there is a more specific way to do this (like with --device) please let me know in an issue. |
-| --volume <Storage_Path>:/opt/lsi/LSIStorageAuthority | volumes: | Server | Mount the server files to make the configuration persistant. |
+| --volume <Storage_Path>:/opt/lsi/LSIStorageAuthority/conf | volumes: | Server | Mount the server files to make the configuration persistant. |
 | --publish 2463:2463 | ports:<br>- 2464:2463 | Server | Opens the port for the web interface. The default is 2463. This should match WEB_PORT if it is set. |
 | --publish 9000:9000 | ports:<br>- 9000:9000 | Client | Opens the port for remote management. The default port is 9000. This should match LSA_PORT on the client if it is set. |
 | --env TZ=America/New_York | environment:<br>- TZ=America/New_York | Not | Sets timezone inside the container. |
@@ -66,3 +66,11 @@ services:
 [Docker Hub](https://hub.docker.com/repository/docker/mecjay12/lsa/general)
 
 [GitHub](https://github.com/MeCJay12/lsi-storage-authority/)
+
+## Change Log
+
+### 8/15/2024
+- Fixed a bug in entrypoint.sh that overwrote newer versions of LSA on upgrade with a mounted config. Please add /conf to the end of your mount point if upgrading from a previous version.
+- Added LSA 007.020.016.000 and 007.019.006.000.
+### 4/17/2024
+- Inital commit with version 007.018.004.000 of LSA on Ubuntu.

@@ -3,7 +3,7 @@ FROM ubuntu:focal
 ENV PASSWORD="password"
 ENV WEB_PORT="2463"
 ENV LSA_PORT="9000"
-ENV VERSION="007.018.004.000"
+ENV VERSION="007.020.016.000"
 ENV TERM=xterm
 
 RUN apt -y update && apt -y install wget unzip libldap2-dev
@@ -11,7 +11,7 @@ COPY entrypoint.sh /
 COPY LsiSASH /
 
 RUN mkdir /MSM && \
-	wget -O /MSM.zip https://docs.broadcom.com/docs-and-downloads/raid-controllers/raid-controllers-common-files/"$VERSION"_LSA_Linux-x64.zip && \
+	wget -O /MSM.zip https://docs.broadcom.com/docs-and-downloads/raid-controllers/raid-controllers-common-files/${VERSION}_LSA_Linux_x64.zip && \
 	unzip -d /MSM /MSM.zip && \
 	rm -f /MSM.zip
 WORKDIR /MSM/x64/
