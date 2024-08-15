@@ -44,20 +44,116 @@ services:
 
 ### Command Reference
 
-| Docker Run | Docker Compose | Required On* | Effect |
-| ---------- | -------------- | ------------ | ------ |
-| --detach | - | All | Run the container in the background |
-| --privileged | privileged: true |  Client | Required on the host with the RAID card. Grants the container access to hardware PCI devices. If there is a more specific way to do this (like with --device) please let me know in an issue. |
-| --volume <Storage_Path>:/opt/lsi/LSIStorageAuthority/conf | volumes: | Server | Mount the server files to make the configuration persistant. |
-| --publish 2463:2463 | ports:<br>- 2464:2463 | Server | Opens the port for the web interface. The default is 2463. This should match WEB_PORT if it is set. |
-| --publish 9000:9000 | ports:<br>- 9000:9000 | Client | Opens the port for remote management. The default port is 9000. This should match LSA_PORT on the client if it is set. |
-| --env TZ=America/New_York | environment:<br>- TZ=America/New_York | Not | Sets timezone inside the container. |
-| --env ROOT_PASSWORD="password" | environment:<br>- ROOT_PASSWORD=password | Not | Sets the password for the root user to login to the web interface. |
-| --env ADD_USERS_RW=<br>"readWriteUser:password user2:password" | environment:<br>- ADD_USERS_RW=<br>readWriteUser:password user2:password | Not | Creates additional users with read/write permission in the web interface. Users should be in <username>:<password> format with spaces between multiple users. |
-| --env ADD_USERS_RO=<br>"readOnlyUser:password" | environment:<br>- ADD_USERS_RO=<br>readOnlyUser:password | Not | Creates additional users with read-only permission in the web interface. Users should be in <username>:<password> format with spaces between multiple users. |
-| --env WEB_PORT=2463 | environment:<br>- WEB_PORT=2463 | Not | Set the port for the web interface. Defaults to 2463 if not set. |
-| --env LSA_PORT=9000 | environment:<br>- LSA_PORT=9000 | Not | Set the port for remote management. Defaults to 9000 if not set. |
-| mecjay12/lsa | image: mecjay12/lsa | All | Pulls the latest stable version of this container. |
+<table>
+	<thead>
+		<tr>
+			<th>Docker Run</th>
+			<th rowspan=2>Required On*</th>
+			<th rowspan=2>Effect</th>
+		</tr>
+		<tr>
+			<th>Docker Compose</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th align=left><pre>--detach</pre></th>
+			<th rowspan=2>All</th>
+			<th rowspan=2>Run the container in the background</th>
+		</tr>
+		<tr>
+			<th align=left>N/A</th>
+		</tr>
+		<tr>
+			<th align=left><pre>--privileged</pre></th>
+			<th rowspan=2>Client</th>
+			<th rowspan=2>Required on the host with the RAID card. Grants the container access to hardware PCI devices. If there is a more specific way to do this (like with --device) please let me know in a ticket.</th>
+		</tr>
+		<tr>
+			<th align=left><pre>privileged: true</pre></th>
+		</tr>
+		<tr>
+			<th align=left><pre>--volume /DataDir:/opt/lsi/LSIStorageAuthority/conf</pre></th>
+			<th rowspan=2>Server</th>
+			<th rowspan=2>Mounts the config files to make the configuration persistant.</th>
+		</tr>
+		<tr>
+			<th align=left><pre>volumes:<br>- /DataDir:/opt/lsi/LSIStorageAuthority/conf</pre></th>
+		</tr>
+		<tr>
+			<th align=left><pre>--publish 2463:2463</pre></th>
+			<th rowspan=2>Server</th>
+			<th rowspan=2>Opens the port for the web interface. The default is 2463. This should match WEB_PORT if it is set.</th>
+		</tr>
+		<tr>
+			<th align=left><pre>ports:<br>- 2464:2463</pre></th>
+		</tr>
+		<tr>
+			<th align=left><pre>--publish 9000:9000</pre></th>
+			<th rowspan=2>Client, Optional</th>
+			<th rowspan=2>Opens the port for remote management. The default port is 9000. This should match LSA_PORT on the client if it is set.</th>
+		</tr>
+		<tr>
+			<th align=left><pre>ports:<br>- 9000:9000</pre></th>
+		</tr>
+		<tr>
+			<th align=left><pre>--env TZ=America/New_York</pre></th>
+			<th rowspan=2>Optional</th>
+			<th rowspan=2>Sets timezone inside the container.</th>
+		</tr>
+		<tr>
+			<th align=left><pre>environment:<br>- TZ=America/New_York</pre></th>
+		</tr>
+		<tr>
+			<th align=left><pre>--env ROOT_PASSWORD="password"</pre></th>
+			<th rowspan=2>Optional</th>
+			<th rowspan=2>Sets the password for the root user to login to the web interface.</th>
+		</tr>
+		<tr>
+			<th align=left><pre>environment:<br>- ROOT_PASSWORD=password</pre></th>
+		</tr>
+		<tr>
+			<th align=left><pre>--env ADD_USERS_RW=<br>"readWriteUser:password user2:password"</pre></th>
+			<th rowspan=2>Optional</th>
+			<th rowspan=2>Creates additional users with read/write permission in the web interface. Users should be in username:password format with spaces between users.</th>
+		</tr>
+		<tr>
+			<th align=left><pre>environment:<br>- ADD_USERS_RW=<br>readWriteUser:password user2:password</pre></th>
+		</tr>
+		<tr>
+			<th align=left><pre>--env ADD_USERS_RO=<br>"readOnlyUser:password"</pre></th>
+			<th rowspan=2>Optional</th>
+			<th rowspan=2>Creates additional users with read-only permission in the web interface. Users should be in username:password format with spaces between users.</th>
+		</tr>
+		<tr>
+			<th align=left><pre>environment:<br>- ADD_USERS_RO=<br>readOnlyUser:password</pre></th>
+		</tr>
+		<tr>
+			<th align=left><pre>--env WEB_PORT=2463</pre></th>
+			<th rowspan=2>Server, Optional</th>
+			<th rowspan=2>Set the port for the web interface. Defaults to 2463 if not set.</th>
+		</tr>
+		<tr>
+			<th align=left><pre>environment:<br>- WEB_PORT=2463</pre></th>
+		</tr>
+		<tr>
+			<th align=left><pre>--env LSA_PORT=9000</pre></th>
+			<th rowspan=2>Client, Optional</th>
+			<th rowspan=2>Set the port for remote management. Defaults to 9000 if not set.</th>
+		</tr>
+		<tr>
+			<th align=left><pre>environment:<br>- LSA_PORT=9000</pre></th>
+		</tr>
+		<tr>
+			<th align=left><pre>mecjay12/lsa</pre></th>
+			<th rowspan=2>All</th>
+			<th rowspan=2>Pulls the latest stable version of this container.</th>
+		</tr>
+		<tr>
+			<th align=left><pre>image: mecjay12/lsa</pre></th>
+		</tr>
+	</tbody>
+</table>
 
 * Client refers to the machine with the RAID card, Server refers to the machine hosting the web interface. A single machine can be both.
 
