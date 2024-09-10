@@ -20,7 +20,7 @@ RUN dpkg -i LSA_lib_utils2-8.00-1_amd64.deb && \
 	cp /LsiSASH /etc/init.d/LsiSASH && \
 	mkdir -p /usr/local/var/log/ && \
 	touch /usr/local/var/log/slpd.log && \
-	mv /opt/lsi/LSIStorageAuthority /opt/lsi/backup && \
+	mv /opt/lsi/LSIStorageAuthority/conf /opt/lsi/backup && \
 	rm -rf /MSM
 WORKDIR /
 
