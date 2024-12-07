@@ -23,7 +23,6 @@ docker run \
 ### Docker Compose
 
 ```
-version: "3.3"
 services:
   lsa:
     privileged: true
@@ -165,6 +164,9 @@ services:
 
 ## Change Log
 
+### 12/6/2024
+- Added LSA 008.011.010.000. When upgrading from older versions of LSA, the config file format seems to have changed requiring a config rebuild.
+- Fixed a bug in entrypoint.sh where the config folder was not created so containers without a mounted config would fail to start the service.
 ### 8/15/2024
 - Fixed a bug in entrypoint.sh that overwrote newer versions of LSA on upgrade with a mounted config. Please add /conf to the end of your mount point if upgrading from a previous version.
 - Added LSA 007.020.016.000 and 007.019.006.000.
