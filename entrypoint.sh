@@ -18,7 +18,7 @@ add_user () {
 
 # Copies LSA files in case user mounted empty dir to server dir to svae config files
 mkdir -p /opt/lsi/LSIStorageAuthority/conf/
-cp -rn /opt/lsi/backup/* /opt/lsi/LSIStorageAuthority/conf/
+cp -rn /opt/lsi/backup/* /opt/lsi/LSIStorageAuthority/
 
 if [[ ! -z "$ROOT_PASSWORD" ]] ; then
 	echo "root:$ROOT_PASSWORD" | chpasswd
