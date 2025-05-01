@@ -82,7 +82,7 @@ services:
 		<tr>
 			<th align=left><pre>--publish 2463:2463</pre></th>
 			<th rowspan=2>Server</th>
-			<th rowspan=2>Opens the port for the web interface. The default is 2463. This should match WEB_PORT if it is set.</th>
+			<th rowspan=2>Opens the port for the web interface. The default is 2463. The number right of the colon (':') should match WEB_PORT if it is set.</th>
 		</tr>
 		<tr>
 			<th align=left><pre>ports:<br>- 2464:2463</pre></th>
@@ -90,7 +90,7 @@ services:
 		<tr>
 			<th align=left><pre>--publish 9000:9000</pre></th>
 			<th rowspan=2>Client, Optional</th>
-			<th rowspan=2>Opens the port for remote management. The default port is 9000. This should match LSA_PORT on the client if it is set.</th>
+			<th rowspan=2>Opens the port for remote management. The default port is 9000. The number right of the colon (':') should match LSA_PORT on the client if it is set.</th>
 		</tr>
 		<tr>
 			<th align=left><pre>ports:<br>- 9000:9000</pre></th>
@@ -164,6 +164,10 @@ services:
 
 ## Change Log
 
+### 4/30/2025
+- Fixed a bug reported in [#5](https://github.com/MeCJay12/lsi-storage-authority/issues/5) where email alerts were set with no body contents.
+- Addred LSA 008.012.007.000 as reported in [#6](https://github.com/MeCJay12/lsi-storage-authority/issues/6).
+- Updated Ubuntu from Focal to Jammy.
 ### 12/6/2024
 - Added LSA 008.011.010.000. When upgrading from older versions of LSA, the config file format seems to have changed requiring a config rebuild.
 - Fixed a bug in entrypoint.sh where the config folder was not created so containers without a mounted config would fail to start the service.
