@@ -4,7 +4,7 @@ ENV PASSWORD="password"
 ENV WEB_PORT="2463"
 ENV LSA_PORT="9000"
 ENV BASEURL="https://docs.broadcom.com/docs-and-downloads"
-ENV VERSION="008.012.007.000_MR7.32_LSA_Linux.zip"
+ENV VERSION="008.014.012.000_MR7.34_LSA_Linux.zip"
 ENV TERM=xterm
 
 RUN apt -y update && apt -y install wget unzip libldap2-dev libgssapi3-heimdal
