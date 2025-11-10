@@ -1,7 +1,7 @@
 FROM ubuntu:jammy AS builder
 
 ENV BASEURL="https://docs.broadcom.com/docs-and-downloads"
-ENV VERSION="008.014.012.000_MR7.34"
+ENV VERSION="008.015.010.000_MR_7.35"
 ENV ARCH="Linux"
 
 RUN apt -y update && \

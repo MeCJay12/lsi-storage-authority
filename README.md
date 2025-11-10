@@ -9,6 +9,7 @@ docker run \
 	--detach \
 	--privileged \
 	--volume /DataDir:/opt/lsi/LSIStorageAuthority/conf \
+	--volume /LogsDir:/opt/lsi/LSIStorageAuthority/logs \
 	--publish 2463:2463 \
 	--publish 9000:9000 \
 	--env TZ=America/New_York \
@@ -28,6 +29,7 @@ services:
     privileged: true
     volumes:
       - /DataDir:/opt/lsi/LSIStorageAuthority/conf
+      - /LogsDir:/opt/lsi/LSIStorageAuthority/logs
     ports:
       - 2463:2463
       - 9000:9000
@@ -78,6 +80,14 @@ services:
 		</tr>
 		<tr>
 			<th align=left><pre>volumes:<br>- /DataDir:/opt/lsi/LSIStorageAuthority/conf</pre></th>
+		</tr>
+		<tr>
+			<th align=left><pre>--volume /LogsDir:/opt/lsi/LSIStorageAuthority/logs</pre></th>
+			<th rowspan=2>Server</th>
+			<th rowspan=2>Mounts the logs files to make the logs persistant.</th>
+		</tr>
+		<tr>
+			<th align=left><pre>volumes:<br>- /LogsDir:/opt/lsi/LSIStorageAuthority/logs</pre></th>
 		</tr>
 		<tr>
 			<th align=left><pre>--publish 2463:2463</pre></th>
@@ -164,6 +174,10 @@ services:
 
 ## Change Log
 
+### 11/8/2025
+- Version bump from 008.012.007.000 to 008.015.010.000
+- Added versions 008.014.012.000 and 008.013.005.000 to Docker Hub
+- Merged PR [#8](https://github.com/MeCJay12/lsi-storage-authority/pull/8) to slim down image size (versions 008.014.012.000+)
 ### 4/30/2025
 - Fixed a bug reported in [#5](https://github.com/MeCJay12/lsi-storage-authority/issues/5) where email alerts were set with no body contents.
 - Addred LSA 008.012.007.000 as reported in [#6](https://github.com/MeCJay12/lsi-storage-authority/issues/6).
