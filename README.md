@@ -178,6 +178,7 @@ services:
 - Version bump from 008.012.007.000 to 008.015.010.000
 - Added versions 008.014.012.000 and 008.013.005.000 to Docker Hub
 - Merged PR [#8](https://github.com/MeCJay12/lsi-storage-authority/pull/8) to slim down image size (versions 008.014.012.000+)
+- Version 008.015.010.000 appears to have a bug where it cannot send email alerts
 ### 4/30/2025
 - Fixed a bug reported in [#5](https://github.com/MeCJay12/lsi-storage-authority/issues/5) where email alerts were set with no body contents.
 - Addred LSA 008.012.007.000 as reported in [#6](https://github.com/MeCJay12/lsi-storage-authority/issues/6).
