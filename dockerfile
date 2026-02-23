@@ -1,7 +1,7 @@
 FROM ubuntu:jammy AS builder
 
 ENV BASEURL="https://docs.broadcom.com/docs-and-downloads"
-ENV VERSION="008.015.010.000_MR_7.35"
+ENV VERSION="008.015.010.000_MR_7.35_LSA_Linux.zip"
 ENV ARCH="Linux"
 
 RUN apt -y update && \
@@ -9,7 +9,7 @@ RUN apt -y update && \
 	rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /MSM && \
-	wget -O /MSM.zip ${BASEURL}/${VERSION}_LSA_${ARCH}.zip && \
+	wget -O /MSM.zip ${BASEURL}/${VERSION} && \
 	unzip -d /MSM /MSM.zip && \
 	cd /MSM && \
 	find . -iname '*.zip' -exec sh -c 'unzip -o -d "${0%.*}" "$0"' '{}' ';' && \
@@ -33,7 +33,7 @@ RUN apt -y update && \
 	dpkg -i libldap-common_2.4.49+dfsg-2ubuntu1_all.deb && \
 	dpkg -i libldap-2.4-2_2.4.49+dfsg-2ubuntu1_amd64.deb && \
 	rm -f *.deb && \
-	apt -y remove wget && \
+  apt -y remove unzip && \
 	apt -y autoremove && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
