@@ -16,8 +16,6 @@ docker run \
 	--env ROOT_PASSWORD="password" \
 	--env ADD_USERS_RW="readWriteUser:password user2:password" \
 	--env ADD_USERS_RO="readOnlyUser:password" \
-	--env WEB_PORT=2463 \
-	--env LSA_PORT=9000 \
 	mecjay12/lsa
 ```
 
@@ -38,8 +36,6 @@ services:
       - ROOT_PASSWORD=password
       - ADD_USERS_RW=readWriteUser:password user2:password
       - ADD_USERS_RO=readOnlyUser:password
-      - WEB_PORT=2463
-      - LSA_PORT=9000
     image: mecjay12/lsa
 ```
 
@@ -92,7 +88,7 @@ services:
 		<tr>
 			<th align=left><pre>--publish 2463:2463</pre></th>
 			<th rowspan=2>Server</th>
-			<th rowspan=2>Opens the port for the web interface. The default is 2463. The number right of the colon (':') should match WEB_PORT if it is set.</th>
+			<th rowspan=2>Opens the port for the web interface. The default is 2463.</th>
 		</tr>
 		<tr>
 			<th align=left><pre>ports:<br>- 2464:2463</pre></th>
@@ -100,7 +96,7 @@ services:
 		<tr>
 			<th align=left><pre>--publish 9000:9000</pre></th>
 			<th rowspan=2>Client, Optional</th>
-			<th rowspan=2>Opens the port for remote management. The default port is 9000. The number right of the colon (':') should match LSA_PORT on the client if it is set.</th>
+			<th rowspan=2>Opens the port for remote management. The default port is 9000.</th>
 		</tr>
 		<tr>
 			<th align=left><pre>ports:<br>- 9000:9000</pre></th>
@@ -138,22 +134,6 @@ services:
 			<th align=left><pre>environment:<br>- ADD_USERS_RO=<br>readOnlyUser:password</pre></th>
 		</tr>
 		<tr>
-			<th align=left><pre>--env WEB_PORT=2463</pre></th>
-			<th rowspan=2>Server, Optional</th>
-			<th rowspan=2>Set the port for the web interface. Defaults to 2463 if not set.</th>
-		</tr>
-		<tr>
-			<th align=left><pre>environment:<br>- WEB_PORT=2463</pre></th>
-		</tr>
-		<tr>
-			<th align=left><pre>--env LSA_PORT=9000</pre></th>
-			<th rowspan=2>Client, Optional</th>
-			<th rowspan=2>Set the port for remote management. Defaults to 9000 if not set.</th>
-		</tr>
-		<tr>
-			<th align=left><pre>environment:<br>- LSA_PORT=9000</pre></th>
-		</tr>
-		<tr>
 			<th align=left><pre>mecjay12/lsa</pre></th>
 			<th rowspan=2>All</th>
 			<th rowspan=2>Pulls the latest stable version of this container.</th>
@@ -174,6 +154,9 @@ services:
 
 ## Change Log
 
+### 10/3/2026
+- Added built in health checks
+- Remove environmental variables WEB_PORT and LSA_PORT because setting them would break health checks. Can still remap port with the publish command.
 ### 11/8/2025
 - Version bump from 008.012.007.000 to 008.015.010.000
 - Added versions 008.014.012.000 and 008.013.005.000 to Docker Hub

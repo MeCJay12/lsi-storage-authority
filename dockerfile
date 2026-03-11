@@ -19,8 +19,6 @@ RUN mkdir /MSM && \
 FROM ubuntu:jammy
 
 ENV PASSWORD="password"
-ENV WEB_PORT="2463"
-ENV LSA_PORT="9000"
 ENV TERM=xterm
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -47,7 +45,7 @@ WORKDIR /MSM/webgui_rel/LSA_Linux/gcc_11.2.x
 
 RUN dpkg -i LSA_lib_utils2-9.00-1_amd64.deb && \
 	chmod +x ./RunDEB.sh && \
-	bash install_deb.sh -s $WEB_PORT $LSA_PORT 2 && \
+	bash install_deb.sh -s 2463 9000 2 && \
 	cp /LsiSASH /etc/init.d/LsiSASH && \
 	mkdir -p /usr/local/var/log/ && \
 	touch /usr/local/var/log/slpd.log && \
@@ -56,5 +54,5 @@ RUN dpkg -i LSA_lib_utils2-9.00-1_amd64.deb && \
 	rm -rf /MSM
 
 WORKDIR /
-
+HEALTHCHECK CMD wget --spider -q http://localhost:2463 1>/dev/null || exit 1
 ENTRYPOINT ["/entrypoint.sh"]
