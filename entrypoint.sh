@@ -10,10 +10,11 @@ LSA_port=$LSA_PORT # Run script will set the LSA control port to the value of LS
 # $1 = Unparsed, individual user in username:password
 # $2 = Group to add user to; root for RW, users for RO
 add_user () {
-	USR=$(echo "$1" |cut -d ':' -f 1)
-
-	useradd -G "$2" "$USR"
-	echo "$1" | chpasswd
+  if ! id -u $1 &>/dev/null; then
+    USR=$(echo "$1" |cut -d ':' -f 1)
+    useradd -G "$2" "$USR"
+    echo "$1" | chpasswd
+  fi
 }
 
 # Copies LSA files in case user mounted empty dir to server dir to svae config files

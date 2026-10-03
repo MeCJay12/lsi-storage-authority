@@ -1,7 +1,7 @@
-FROM ubuntu:jammy AS builder
+FROM debian:trixie AS builder
 
 ENV BASEURL="https://docs.broadcom.com/docs-and-downloads"
-ENV VERSION="008.015.010.000_MR_7.35_LSA_Linux.zip"
+ENV VERSION="008.018.012.000_MR_8.18_AV1_LSA_Linux.zip"
 ENV ARCH="Linux"
 
 RUN apt -y update && \
@@ -16,34 +16,24 @@ RUN mkdir /MSM && \
 	find . -iname '*.zip' -delete
 
 # Final stage
-FROM ubuntu:jammy
+FROM debian:trixie
 
 ENV PASSWORD="password"
 ENV TERM=xterm
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt -y update && \
-	apt -y install --no-install-recommends libldap2-dev libgssapi3-heimdal wget && \
-	wget -q http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb && \
-	wget -q http://archive.ubuntu.com/ubuntu/pool/main/o/openldap/libldap-common_2.4.49+dfsg-2ubuntu1_all.deb && \
-	wget -q http://archive.ubuntu.com/ubuntu/pool/main/o/openldap/libldap-2.4-2_2.4.49+dfsg-2ubuntu1_amd64.deb && \
-	dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb && \
-	dpkg -i libldap-common_2.4.49+dfsg-2ubuntu1_all.deb && \
-	dpkg -i libldap-2.4-2_2.4.49+dfsg-2ubuntu1_amd64.deb && \
-	rm -f *.deb && \
-  apt -y remove unzip && \
-	apt -y autoremove && \
-	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+  apt -y install libldap2 procps wget
 
 COPY entrypoint.sh /
 COPY LsiSASH /
 RUN chmod +x /entrypoint.sh
 
-COPY --from=builder /MSM/webgui_rel/LSA_Linux/gcc_11.2.x /MSM/webgui_rel/LSA_Linux/gcc_11.2.x
+COPY --from=builder /MSM/webgui_rel/LSA_Linux/gcc_11.2.x /MSM/gcc_11.2.x
 
-WORKDIR /MSM/webgui_rel/LSA_Linux/gcc_11.2.x
+WORKDIR /MSM/gcc_11.2.x
 
-RUN dpkg -i LSA_lib_utils2-9.00-1_amd64.deb && \
+RUN apt -y install ./LSA_lib_utils2-9.00-1_amd64.deb && \
 	chmod +x ./RunDEB.sh && \
 	bash install_deb.sh -s 2463 9000 2 && \
 	cp /LsiSASH /etc/init.d/LsiSASH && \
@@ -51,7 +41,10 @@ RUN dpkg -i LSA_lib_utils2-9.00-1_amd64.deb && \
 	touch /usr/local/var/log/slpd.log && \
 	mv /opt/lsi/LSIStorageAuthority /opt/lsi/backup && \
 	cd / && \
-	rm -rf /MSM
+	rm -rf /MSM && \
+	apt -y autoremove && \
+  apt -y clean && \
+	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 WORKDIR /
 HEALTHCHECK CMD wget --spider -q http://localhost:2463 1>/dev/null || exit 1
