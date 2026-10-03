@@ -7,7 +7,7 @@ LSI Storage Authority (LSA) is the successor to MegaRaid Storage Manager (MSM) f
 ```
 docker run \
 	--detach \
-	--privileged \
+	--cap-add SYS_ADMIN \
 	--volume /DataDir:/opt/lsi/LSIStorageAuthority/conf \
 	--volume /LogsDir:/opt/lsi/LSIStorageAuthority/logs \
 	--publish 2463:2463 \
@@ -16,6 +16,9 @@ docker run \
 	--env ROOT_PASSWORD="password" \
 	--env ADD_USERS_RW="readWriteUser:password user2:password" \
 	--env ADD_USERS_RO="readOnlyUser:password" \
+    --device /dev/mpt2ctl:/dev/mpt2ctl \									# Older devices in IT mode
+    --device /dev/mpt3ctl:/dev/mpt3ctl \									# Newer devices in IT mode
+    --device /dev/megaraid_sas_ioctl_node:/dev/megaraid_sas_ioctl_node \    # Devices in RAID mode
 	mecjay12/lsa
 ```
 
@@ -24,10 +27,11 @@ docker run \
 ```
 services:
   lsa:
-    privileged: true
     volumes:
       - /DataDir:/opt/lsi/LSIStorageAuthority/conf
       - /LogsDir:/opt/lsi/LSIStorageAuthority/logs
+    cap_add:
+      - SYS_ADMIN
     ports:
       - 2463:2463
       - 9000:9000
@@ -36,6 +40,10 @@ services:
       - ROOT_PASSWORD=password
       - ADD_USERS_RW=readWriteUser:password user2:password
       - ADD_USERS_RO=readOnlyUser:password
+	devices:
+      - /dev/mpt2ctl:/dev/mpt2ctl  									# Older devices in IT mode
+      - /dev/mpt3ctl:/dev/mpt3ctl  									# Newer devices in IT mode
+      - /dev/megaraid_sas_ioctl_node:/dev/megaraid_sas_ioctl_node   # Devices in RAID mode
     image: mecjay12/lsa
 ```
 
@@ -62,12 +70,12 @@ services:
 			<th align=left>N/A</th>
 		</tr>
 		<tr>
-			<th align=left><pre>--privileged</pre></th>
+			<th align=left><pre>--cap-add SYS_ADMIN</pre></th>
 			<th rowspan=2>Client</th>
 			<th rowspan=2>Required on the host with the RAID card. Grants the container access to hardware PCI devices. If there is a more specific way to do this (like with --device) please let me know in a ticket.</th>
 		</tr>
 		<tr>
-			<th align=left><pre>privileged: true</pre></th>
+			<th align=left><pre>cap_add:<br>- SYS_ADMIN</pre></th>
 		</tr>
 		<tr>
 			<th align=left><pre>--volume /DataDir:/opt/lsi/LSIStorageAuthority/conf</pre></th>
@@ -134,6 +142,38 @@ services:
 			<th align=left><pre>environment:<br>- ADD_USERS_RO=<br>readOnlyUser:password</pre></th>
 		</tr>
 		<tr>
+			<th align=left><pre>environment:<br>- ADD_USERS_RW=<br>readWriteUser:password user2:password</pre></th>
+		</tr>
+		<tr>
+			<th align=left><pre>--device /dev/mpt2ctl:/dev/mpt2ctl</pre></th>
+			<th rowspan=2>Optional</th>
+			<th rowspan=2>Required to grant access from the container to older devices in IT mode</th>
+		</tr>
+		<tr>
+			<th align=left><pre>devices:<br>- /dev/mpt2ctl:/dev/mpt2ctl</pre></th>
+		</tr>
+		<tr>
+			<th align=left><pre>--device /dev/mpt3ctl:/dev/mpt3ctl</pre></th>
+			<th rowspan=2>Optional</th>
+			<th rowspan=2>Required to grant access from the container to newer devices in IT mode</th>
+		</tr>
+		<tr>
+			<th align=left><pre>devices:<br>- /dev/mpt3ctl:/dev/mpt3ctl</pre></th>
+		</tr>
+		<tr>
+			<th align=left><pre>mecjay12/lsa</pre></th>
+			<th rowspan=2>All</th>
+			<th rowspan=2>Pulls the latest stable version of this container.</th>
+		</tr> 
+		<tr>
+			<th align=left><pre>--device /dev/megaraid_sas_ioctl_node:/dev/megaraid_sas_ioctl_node</pre></th>
+			<th rowspan=2>Optional</th>
+			<th rowspan=2>Required to grant access from the container to devices in RAID mode</th>
+		</tr>
+		<tr>
+			<th align=left><pre>devices:<br>- /dev/megaraid_sas_ioctl_node:/dev/megaraid_sas_ioctl_node</pre></th>
+		</tr>
+		<tr>
 			<th align=left><pre>mecjay12/lsa</pre></th>
 			<th rowspan=2>All</th>
 			<th rowspan=2>Pulls the latest stable version of this container.</th>
@@ -151,26 +191,3 @@ services:
 [Docker Hub](https://hub.docker.com/repository/docker/mecjay12/lsa/general)
 
 [GitHub](https://github.com/MeCJay12/lsi-storage-authority/)
-
-## Change Log
-
-### 10/3/2026
-- Added built in health checks
-- Remove environmental variables WEB_PORT and LSA_PORT because setting them would break health checks. Can still remap port with the publish command.
-### 11/8/2025
-- Version bump from 008.012.007.000 to 008.015.010.000
-- Added versions 008.014.012.000 and 008.013.005.000 to Docker Hub
-- Merged PR [#8](https://github.com/MeCJay12/lsi-storage-authority/pull/8) to slim down image size (versions 008.014.012.000+)
-- Version 008.015.010.000 appears to have a bug where it cannot send email alerts
-### 4/30/2025
-- Fixed a bug reported in [#5](https://github.com/MeCJay12/lsi-storage-authority/issues/5) where email alerts were set with no body contents.
-- Addred LSA 008.012.007.000 as reported in [#6](https://github.com/MeCJay12/lsi-storage-authority/issues/6).
-- Updated Ubuntu from Focal to Jammy.
-### 12/6/2024
-- Added LSA 008.011.010.000. When upgrading from older versions of LSA, the config file format seems to have changed requiring a config rebuild.
-- Fixed a bug in entrypoint.sh where the config folder was not created so containers without a mounted config would fail to start the service.
-### 8/15/2024
-- Fixed a bug in entrypoint.sh that overwrote newer versions of LSA on upgrade with a mounted config. Please add /conf to the end of your mount point if upgrading from a previous version.
-- Added LSA 007.020.016.000 and 007.019.006.000.
-### 4/17/2024
-- Inital commit with version 007.018.004.000 of LSA on Ubuntu.
