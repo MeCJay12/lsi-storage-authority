@@ -18,6 +18,9 @@ RUN mkdir /MSM && \
 # Final stage
 FROM debian:trixie
 
+ENV WEB_PORT=2463
+ENV LSA_PORT=9000
+
 ENV PASSWORD="password"
 ENV TERM=xterm
 ENV DEBIAN_FRONTEND=noninteractive
@@ -35,7 +38,7 @@ WORKDIR /MSM/gcc_11.2.x
 
 RUN apt -y install ./LSA_lib_utils2-9.00-1_amd64.deb && \
 	chmod +x ./RunDEB.sh && \
-	bash install_deb.sh -s 2463 9000 2 && \
+	bash install_deb.sh -s $WEB_PORT $LSA_PORT 2 && \
 	cp /LsiSASH /etc/init.d/LsiSASH && \
 	mkdir -p /usr/local/var/log/ && \
 	touch /usr/local/var/log/slpd.log && \
@@ -47,5 +50,5 @@ RUN apt -y install ./LSA_lib_utils2-9.00-1_amd64.deb && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 WORKDIR /
-HEALTHCHECK CMD wget --spider -q http://localhost:2463 1>/dev/null || exit 1
+HEALTHCHECK CMD wget --spider -q http://localhost:$WEB_PORT 1>/dev/null || exit 1
 ENTRYPOINT ["/entrypoint.sh"]

@@ -11,7 +11,7 @@ LSA_port=$LSA_PORT # Run script will set the LSA control port to the value of LS
 # $2 = Group to add user to; root for RW, users for RO
 add_user () {
   if ! id -u $1 &>/dev/null; then
-    USR=$(echo "$1" |cut -d ':' -f 1)
+    USR=$(echo "$1" | cut -d ':' -f 1)
     useradd -G "$2" "$USR"
     echo "$1" | chpasswd
   fi
